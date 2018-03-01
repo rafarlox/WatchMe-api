@@ -101,11 +101,12 @@ class TvGuideController extends Controller
 
         $data = json_decode($response);
 
-        //dd($data->results);
-
         foreach ($data->results as $key => $value) {
 
-            $movie = array($value->title, $value->original_title, $value->release_date, $value->genre_ids);
+            $movie = array($value->id, $value->title, $value->original_title, $value->release_date);
+
+            //$genres = $this->GetGenresByIdMovie($value->id);
+            //array_push($movie, $genres);
 
             array_push($result, $movie);
         }
@@ -120,5 +121,29 @@ class TvGuideController extends Controller
             dd($result);
             echo $result;
         }
+    }
+
+    public function GetGenresByIdMovie($id){
+        $curl = curl_init();
+
+        $result = array();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => "https://api.themoviedb.org/3/movie/" . $id . "?api_key=1e04de70b2b99214c95b0e9cd9bf9b9b",
+            CURLOPT_RETURNTRANSFER => 1
+        ));
+
+        $response = curl_exec($curl);
+
+        $data = json_decode($response);
+
+        //$genres = $data->genres;
+
+
+        for ($i = 0; $i < count($data->genres); $i++){
+            array_push($result, $data->genres[$i]->name);
+        }
+
+        return $result;
     }
 }
