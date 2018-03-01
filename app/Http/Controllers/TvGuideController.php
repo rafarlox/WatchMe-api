@@ -123,7 +123,8 @@ class TvGuideController extends Controller
         }
     }
 
-    public function GetGenresByIdMovie($id){
+    public function GetGenresByIdMovie($id)
+    {
         $curl = curl_init();
 
         $result = array();
@@ -140,10 +141,46 @@ class TvGuideController extends Controller
         //$genres = $data->genres;
 
 
-        for ($i = 0; $i < count($data->genres); $i++){
+        for ($i = 0; $i < count($data->genres); $i++) {
             array_push($result, $data->genres[$i]->name);
         }
 
         return $result;
+    }
+
+    /**
+     * @param $idTitle
+     * @param $page
+     * @param $language (ex : en-US)
+     */
+    public function GetIdRecommendationsTitle($idTitle, $page, $language) {
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => "https://api.themoviedb.org/3/movie/" . $idTitle . "/recommendations?api_key=1e04de70b2b99214c95b0e9cd9bf9b9b&page=" . $page . "&language=" . $language,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "GET",
+            CURLOPT_POSTFIELDS => "{}",
+        ));
+
+        $response = curl_exec($curl);
+        $data = json_decode($response);
+
+        $idRecommendationsTitle = array();
+
+        foreach($data->results as $item) {
+
+            $arrayTemp = array(
+                'id' => $item->id,
+            );
+            array_push($idRecommendationsTitle, $arrayTemp);
+        }
+
+        $idRecommendationsTitle = json_encode($idRecommendationsTitle);
+        curl_close($curl);
     }
 }
