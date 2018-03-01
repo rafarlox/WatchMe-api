@@ -24,34 +24,41 @@ class TvGuideController extends Controller
         ));
 
         $result = curl_exec($curl);
-
         return $result;
     }
 
-    public function GetGuideTv($station, $date, $bu)
+    public function GetDataFromEPG($station, $date, $bu)
     {
         $curl = $this->InitCurlTvShowsGuide($station, $date, $bu);
 
-        $datas = json_decode($curl);
+        $data = json_decode($curl);
 
-        $tvGuide = array();
+        $tvGuideData = array();
 
-        foreach($datas as $data) {
+        foreach($data as $item) {
             $actors = array();
 
-            foreach($data->actors as $actor) {
+            foreach($item->actors as $actor) {
                 array_push($actors, $actor->realName);
             }
 
-            $epg = array(
-                $data->title,
-                $actors
+            $schedule = array();
+
+            array_push($schedule, $item->start->date);
+            array_push($schedule, $item->end->date);
+
+
+            $tempTvGuideData = array(
+                'title' => $item->title,
+                'startDate' => $schedule[0],
+                'endDate' => $schedule[1],
+                'actors' => $actors,
             );
 
-            array_push($tvGuide, $epg);
+            array_push($tvGuideData, $tempTvGuideData);
         }
-        dd($tvGuide);
-        return $tvGuide;
+        $tvGuideData = json_encode($tvGuideData);
+        return $tvGuideData;
     }
 
     public function GetInfoByTMDb($title){

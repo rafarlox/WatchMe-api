@@ -15,4 +15,4 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/title/station/{station}/date/{date}/bu/{bu}', 'TvGuideController@GetGuideTv');
+Route::get('/title/station/{station}/date/{date}/bu/{bu}', 'TvGuideController@GetDataFromEPG');
