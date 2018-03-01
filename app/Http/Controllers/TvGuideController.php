@@ -7,14 +7,14 @@ use Illuminate\Http\Request;
 class TvGuideController extends Controller
 {
 
-    public function InitCurlTvShowsGuide($station, $date, $bu) {
-        $curl = curl_init();
+        public function InitCurlTvShowsGuide($station, $date, $bu) {
+            $curl = curl_init();
 
-        curl_setopt_array($curl, array(
-            CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_URL => 'https://api.srgssr.ch/epg/v2/tvshows/stations/rts-1?date=2018-03-01&bu=SRF',
-            CURLOPT_HTTPHEADER => array('accept: application/json', 'Authorization:  ', 'Authorization: Bearer H7WjusPyormcKPVGPU06DgC0VgdV')
-        ));
+            curl_setopt_array($curl, array(
+                CURLOPT_RETURNTRANSFER => 1,
+                CURLOPT_URL => 'https://api.srgssr.ch/epg/v2/tvshows/stations/rts-1?date=2018-03-01&bu=SRF',
+                CURLOPT_HTTPHEADER => array('accept: application/json', 'Authorization:  ', 'Authorization: Bearer H7WjusPyormcKPVGPU06DgC0VgdV')
+            ));
 
         $result = curl_exec($curl);
 
