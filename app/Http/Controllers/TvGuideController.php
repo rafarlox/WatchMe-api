@@ -21,7 +21,6 @@ class TvGuideController extends Controller
         return $result;
     }
 
-
     public function GetGuideTv($station, $date, $bu)
     {
         $curl = $this->InitCurlTvShowsGuide($station, $date, $bu);
@@ -34,13 +33,18 @@ class TvGuideController extends Controller
         {
             $epg = array(
                 $data->title,
+                $data->subTitle,
                 $data->shortDescription,
-                $data->actors,
+                $data->actors
             );
 
             array_push($titles, $epg);
         }
         dd($tvGuide);
+
+    }
+
+    public function GetInfoByTMDb($title){
 
     }
 }
