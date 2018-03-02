@@ -20,3 +20,7 @@ Route::get('/title/station/{station}/date/{date}/bu/{bu}', 'TvGuideController@Ge
 Route::get('/tmdb/title/{title}', 'TvGuideController@GetInfoByTMDb');
 
 Route::get('/tmdb/idTitle/{idTitle}/page/{page}/language/{language}', 'TvGuideController@GetIdRecommendationsTitle');
+
+Route::get('/tmdb/id/{id}', 'TvGuideController@GetAllDetailsByIDMovie');
+
+Route::get('/tmdb/genre/{genre}', 'TvGuideController@GetMoviesByGenres');
