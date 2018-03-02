@@ -119,7 +119,7 @@ class TvGuideController extends Controller
             echo "cURL Error #:" . $err;
         } else {
             dd($result);
-            echo $result;
+            return json_encode($result);
         }
     }
 
@@ -135,6 +135,8 @@ class TvGuideController extends Controller
         ));
 
         $response = curl_exec($curl);
+
+        curl_close($curl);
 
         $data = json_decode($response);
 
@@ -182,5 +184,55 @@ class TvGuideController extends Controller
 
         $idRecommendationsTitle = json_encode($idRecommendationsTitle);
         curl_close($curl);
+    }
+
+    public function GetAllDetailsByIDMovie($id){
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => "https://api.themoviedb.org/3/movie/" . $id . "?api_key=1e04de70b2b99214c95b0e9cd9bf9b9b",
+            CURLOPT_RETURNTRANSFER => 1
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+
+        $data = json_decode($response);
+
+        $movie = array($data->id, $data->title, $data->original_title, $data->release_date);
+
+        $genres = array();
+
+        for ($i = 0; $i < count($data->genres); $i++) {
+            array_push($genres, $data->genres[$i]->name);
+        }
+
+        array_push($movie, $genres);
+
+        dd(movie);
+
+        return json_encode($movie);
+    }
+
+    public function GetMoviesByGenres($genres){
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => "https://api.themoviedb.org/3/discover/movie?api_key=1e04de70b2b99214c95b0e9cd9bf9b9b&with_genres=" . str_replace(' ', '%20', $genres),
+            CURLOPT_RETURNTRANSFER => 1
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+
+        $data = json_decode($response);
+
+        $movie = array($data->id, $data->title, $data->original_title, $data->release_date);
+
+        dd(movie);
+
+        return json_encode($movie);
     }
 }
