@@ -19,7 +19,7 @@ Route::get('/title/station/{station}/date/{date}/bu/{bu}', 'TvGuideController@Ge
 
 Route::get('/movies/title/{title}', 'TvGuideController@GetInfoMovieByTitle');
 
-Route::get('/movies/idTitle/{idTitle}/page/{page}/language/{language}', 'TvGuideController@GetIdRecommendationsTitle');
+Route::get('/url/{url}/id/{id}/page/{page}/language/{language}', 'TvGuideController@GetIdRecommendations');
 
 Route::get('/movies/id/{id}', 'TvGuideController@GetAllDetailsByIDMovie');
 

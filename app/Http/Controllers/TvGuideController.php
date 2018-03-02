@@ -146,16 +146,17 @@ class TvGuideController extends Controller
     }
 
     /**
-     * @param $idTitle
+     * @param $id
+     * @param $url "movie" | "tv"
      * @param $page
      * @param $language (ex : en-US)
      * @return array|string
      */
-    public function GetIdRecommendationsTitle($idTitle, $page = 1, $language = "en-US") {
+    public function GetIdRecommendations($id, $url,$page = 1, $language = "en-US") {
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => "https://api.themoviedb.org/3/movie/" . $idTitle . "/recommendations?api_key=1e04de70b2b99214c95b0e9cd9bf9b9b&page=" . $page . "&language=" . $language,
+            CURLOPT_URL => "https://api.themoviedb.org/3/" . $id . "/" . $url . "/recommendations?api_key=1e04de70b2b99214c95b0e9cd9bf9b9b&page=" . $page . "&language=" . $language,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => "",
             CURLOPT_MAXREDIRS => 10,
@@ -203,7 +204,7 @@ class TvGuideController extends Controller
 
 
         foreach($data->results as $item) {
-            
+
             $moviesKnownForActor = array();
 
             foreach($item->known_for as $movie) {
@@ -215,7 +216,6 @@ class TvGuideController extends Controller
             $arrayTemp = array(
                 'name' => $item->name,
                 'know_for' => $moviesKnownForActor,
-
 
             );
 
