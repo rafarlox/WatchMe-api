@@ -17,10 +17,12 @@ Route::get('/', function () {
 
 Route::get('/title/station/{station}/date/{date}/bu/{bu}', 'TvGuideController@GetDataFromEPG');
 
-Route::get('/tmdb/title/{title}', 'TvGuideController@GetInfoByTMDb');
+Route::get('/movies/title/{title}', 'TvGuideController@GetInfoByTMDb');
 
-Route::get('/tmdb/idTitle/{idTitle}/page/{page}/language/{language}', 'TvGuideController@GetIdRecommendationsTitle');
+Route::get('/movies/idTitle/{idTitle}/page/{page}/language/{language}', 'TvGuideController@GetIdRecommendationsTitle');
 
-Route::get('/tmdb/id/{id}', 'TvGuideController@GetAllDetailsByIDMovie');
+Route::get('/movies/id/{id}', 'TvGuideController@GetAllDetailsByIDMovie');
 
-Route::get('/tmdb/genre/{genre}', 'TvGuideController@GetMoviesByGenres');
+Route::get('/movies/genre/{genre}', 'TvGuideController@GetMoviesByGenres');
+
+Route::get('/movies/actor/{query}/page/{page?}/language/{language?}/adult/{adult?}', 'TvGuideController@SearchActor');

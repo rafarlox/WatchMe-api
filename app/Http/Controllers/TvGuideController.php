@@ -61,8 +61,8 @@ class TvGuideController extends Controller
 
             array_push($tvGuideData, $tempTvGuideData);
         }
-        $tvGuideData = json_encode($tvGuideData);
-        return $tvGuideData;
+
+        return response()->json($tvGuideData);
     }
 
     private function InitTMDb(){
@@ -183,16 +183,15 @@ class TvGuideController extends Controller
             array_push($idRecommendationsTitle, $arrayTemp);
         }
 
-        $idRecommendationsTitle = json_encode($idRecommendationsTitle);
         curl_close($curl);
-        return $idRecommendationsTitle;
+        return response()->json($idRecommendationsTitle);
     }
 
     public function SearchActor($query, $adult = false, $page = 1, $language = "en-US") {
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => "https://api.themoviedb.org/3/search/person?include_adult=" . $adult . "&page=" . $page . "&query=" . $query . "&language=" . $language . "&api_key=1e04de70b2b99214c95b0e9cd9bf9b9b",
+            CURLOPT_URL => "https://api.themoviedb.org/3/search/person?include_adult=" . $adult . "&page=" . $page . "&query=" . str_replace(' ', '%20', $query) . "&language=" . $language . "&api_key=1e04de70b2b99214c95b0e9cd9bf9b9b",
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => "",
             CURLOPT_MAXREDIRS => 10,
@@ -205,19 +204,28 @@ class TvGuideController extends Controller
         $response = curl_exec($curl);
         $data = json_decode($response);
 
+        $actors = array();
+
+
         foreach($data->results as $item) {
 
-            
+            $moviesKnownForActor = array();
+
+            foreach($item->known_for as $movie) {
+
+                if(isset($movie->title))
+                    array_push($moviesKnownForActor, $movie->title, $movie->genre_ids, $movie->poster_path);
+            }
 
             $arrayTemp = array(
                 'name' => $item->name,
-                'know_for' => $item->known_for,
-
+                'know_for' => $moviesKnownForActor,
             );
+
+            array_push($actors, $arrayTemp);
         }
-
-
         curl_close($curl);
+        return response()->json($actors);
     }
 
     public function GetAllDetailsByIDMovie($id){
