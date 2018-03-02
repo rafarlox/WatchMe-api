@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 class TvGuideController extends Controller
 {
 
-
     /**
      * Use the API of the rts : https://developer.srgssr.ch/apis/srgssr-epg/tvshowsguide
      * @param $station
@@ -87,7 +86,7 @@ class TvGuideController extends Controller
         }
     }
 
-    public function GetInfoByTMDb($title){
+    public function GetInfoMovieByTitle($title){
         $curl = curl_init();
 
         $result = array();
@@ -103,10 +102,7 @@ class TvGuideController extends Controller
 
         foreach ($data->results as $key => $value) {
 
-            $movie = array($value->id, $value->title, $value->original_title, $value->release_date);
-
-            //$genres = $this->GetGenresByIdMovie($value->id);
-            //array_push($movie, $genres);
+            $movie = array('id'=>$value->id, 'title'=>$value->title, 'release_date'=>$value->release_date, 'poster_path'=>$value->poster_path);
 
             array_push($result, $movie);
         }
@@ -118,8 +114,7 @@ class TvGuideController extends Controller
         if ($err) {
             echo "cURL Error #:" . $err;
         } else {
-            dd($result);
-            return json_encode($result);
+            return response()->json($result);
         }
     }
 
@@ -207,12 +202,9 @@ class TvGuideController extends Controller
 
         foreach($data->results as $item) {
 
-            
-
             $arrayTemp = array(
                 'name' => $item->name,
                 'know_for' => $item->known_for,
-
             );
         }
 
@@ -234,19 +226,15 @@ class TvGuideController extends Controller
 
         $data = json_decode($response);
 
-        $movie = array($data->id, $data->title, $data->original_title, $data->release_date);
-
         $genres = array();
 
         for ($i = 0; $i < count($data->genres); $i++) {
             array_push($genres, $data->genres[$i]->name);
         }
 
-        array_push($movie, $genres);
+        $movie = array('id'=>$data->id, 'title'=>$data->title, 'original_title'=>$data->original_title, 'release_date'=>$data->release_date, 'poster_path'=>$data->poster_path, 'genres'=>$genres);
 
-        dd(movie);
-
-        return json_encode($movie);
+        return response()->json($movie);
     }
 
     public function GetMoviesByGenres($genres){
@@ -268,6 +256,65 @@ class TvGuideController extends Controller
         dd(movie);
 
         return json_encode($movie);
+    }
+
+
+    public function GetInfoSeriesByTitle($title){
+        $curl = curl_init();
+
+        $result = array();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => "https://api.themoviedb.org/3/search/tv?api_key=1e04de70b2b99214c95b0e9cd9bf9b9b&query=" . str_replace(' ', '%20', $title),
+            CURLOPT_RETURNTRANSFER => 1
+        ));
+
+        $response = curl_exec($curl);
+
+        $data = json_decode($response);
+
+        foreach ($data->results as $key => $value) {
+
+            $movie = array('id'=>$value->id, 'title'=>$value->name, 'release_date'=>$value->first_air_date, 'poster_path'=>$value->poster_path);
+
+            array_push($result, $movie);
+        }
+
+        $err = curl_error($curl);
+
+        curl_close($curl);
+
+        if ($err) {
+            echo "cURL Error #:" . $err;
+        } else {
+            return response()->json($result);
+        }
+    }
+
+
+    public function GetAllDetailsByIDSeries($id){
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => "https://api.themoviedb.org/3/tv/" . $id . "?api_key=1e04de70b2b99214c95b0e9cd9bf9b9b",
+            CURLOPT_RETURNTRANSFER => 1
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+
+        $data = json_decode($response);
+
+        $genres = array();
+
+        for ($i = 0; $i < count($data->genres); $i++) {
+            array_push($genres, $data->genres[$i]->name);
+        }
+
+        $movie = array('id'=>$data->id, 'title'=>$data->name, 'original_title'=>$data->original_name, 'release_date'=>$data->first_air_date, 'poster_path'=>$data->poster_path, 'genres'=>$genres);
+
+        return response()->json($movie);
     }
 }
 
