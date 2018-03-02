@@ -152,8 +152,9 @@ class TvGuideController extends Controller
      * @param $idTitle
      * @param $page
      * @param $language (ex : en-US)
+     * @return array|string
      */
-    public function GetIdRecommendationsTitle($idTitle, $page, $language) {
+    public function GetIdRecommendationsTitle($idTitle, $page = 1, $language = "en-US") {
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
@@ -182,5 +183,39 @@ class TvGuideController extends Controller
 
         $idRecommendationsTitle = json_encode($idRecommendationsTitle);
         curl_close($curl);
+        return $idRecommendationsTitle;
+    }
+
+    public function SearchActor($query, $adult = false, $page = 1, $language = "en-US") {
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => "https://api.themoviedb.org/3/search/person?include_adult=" . $adult . "&page=" . $page . "&query=" . $query . "&language=" . $language . "&api_key=1e04de70b2b99214c95b0e9cd9bf9b9b",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "GET",
+            CURLOPT_POSTFIELDS => "{}",
+        ));
+
+        $response = curl_exec($curl);
+        $data = json_decode($response);
+
+        foreach($data->results as $item) {
+
+            
+
+            $arrayTemp = array(
+                'name' => $item->name,
+                'know_for' => $item->known_for,
+
+            );
+        }
+
+
+        curl_close($curl);
     }
 }
+
